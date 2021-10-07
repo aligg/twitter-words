@@ -5,16 +5,16 @@ import os;
 from flask import Flask, jsonify, json
 
 
-class ApiHandelr(Resource):
-  url = 'https://api.twitter.com/1.1/statuses/user_timeline.json'
-  Twitter_Barear_Token= os.environ.get('Twitter_Barear_Token')
+class ApiHandler(Resource):
+  
+  def get(self):
+      url = 'https://api.twitter.com/1.1/statuses/user_timeline.json'
+      Twitter_Barear_Token= os.environ.get('Twitter_Barear_Token')
 
-  header = {"Authorization":  f"Bearer {Twitter_Barear_Token}"}
-  def getTweets(self):
-      userName = requests.args.get("userName")
-      searchWord=  requests.args.get("word")
+      header = {"Authorization":  f"Bearer {Twitter_Barear_Token}"}
+      userName = "emanWamda" #requests.args.get("searchQuery")
       params = {'screen_name': userName};
-      response = requests.get(url, auth= header, params = params)
+      response = requests.get(url, headers= header, params = params)
 
       if response.status_code != 200 :
           raise Exception(
@@ -25,10 +25,21 @@ class ApiHandelr(Resource):
 
       print('tweets');
       tweets = response.json();
-      tweet_obj = json.loads(tweets)
-      tweets_filter = [x for x in tweet_obj if x['text'].find(searchWord) != -1]
 
-      countOfTweets= len(tweets_filter)
+      dict = {};
+      for x in tweets: 
+            if x['text'] in dict: 
+                ++dict[x['text']]
+            else:
+               dict[x['text']]= 1
 
+      max_word= ""       
+      max = 0    
+      for key in dict.keys(): 
+        if dict[key] > max:
+            max = dict[key]
+            max_word = key
 
-      return jsonify({'text': searchWord, 'value': countOfTweets});
+      print(max)
+      return jsonify({'text': max, 'value': max_word})
+    

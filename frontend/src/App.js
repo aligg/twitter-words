@@ -14,7 +14,7 @@ function App() {
       setLoading(true);
 
       axios
-        .get("http://localhost:3000/", { params: { userName:'emanNahed', word: searchQuery} })
+        .get("http://localhost:5000/", { params: {  query: searchQuery } })
         .then((response) => {
           console.log("SUCCESS", response);
           setWords(response.data.words);
